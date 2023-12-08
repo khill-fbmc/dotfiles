@@ -1,7 +1,4 @@
-if test ! $(which spoof)
+if (( $+commands[nvm] ))
 then
-  if test $(which npm)
-  then
-    sudo npm install spoof -g
-  fi
+    nvm install lts
 fi
