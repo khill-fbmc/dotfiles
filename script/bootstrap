@@ -33,9 +33,11 @@ setup_gitconfig() {
 }
 
 link_file() {
-  local src=$1 dst=$2
-
-  local overwrite= backup= skip=
+  local src=$1
+  local dst=$2
+  local overwrite=
+  local backup=
+  local skip=
   local action=
 
   if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]
@@ -106,7 +108,9 @@ link_file() {
 install_dotfiles() {
   info 'installing dotfiles'
 
-  local overwrite_all=false backup_all=false skip_all=false
+  local overwrite_all=false
+  local backup_all=false
+  local skip_all=false
 
   for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not -path '*.git*')
   do
@@ -115,30 +119,31 @@ install_dotfiles() {
   done
 }
 
-echo ''
+main() {
+  # setup_gitconfig
+  install_dotfiles
 
-# setup_gitconfig
-install_dotfiles
+  # If we're on a Mac, let's install and setup homebrew.
+  if is_macos
+  then
+    info "setting sane mac defaults"
+    $DOTFILES_ROOT/macos/set-defaults.sh
+    success "settings updated"
 
-# If we're on a Mac, let's install and setup homebrew.
-if is_macos
-then
-  info "setting Mac defaults"
-  $DOTFILES_ROOT/macos/set-defaults.sh
+    [ ! $(which brew) ] && $DOTFILES_ROOT/homebrew/install.sh 2>&1
 
-  [ ! $(which brew) ] && $DOTFILES_ROOT/homebrew/install.sh 2>&1
+    info "update & upgrade brew apps"
+    brew update -q
+    success "brew update"
+    brew upgrade -q
+    success "brew upgrade"
 
-  info "updating brew"
-  brew update -q
-  success "brew updated"
+    info "installing topics"
+    $DOTFILES_ROOT/script/install
+  fi
+}
 
-  info "upgrading brew apps"
-  brew upgrade -q
-  success "apps upgraded"
-
-  info "running topic installers"
-  $DOTFILES_ROOT/script/install
-fi
-
-echo ''
-echo -e "${MAGENTA}> System Ready!${RESET}"
+NOW=$(date "+%H:%M:%S")
+printf "\n[ ${YELLOW}BEGIN${RESET} ] started @ $NOW\n\n"
+main
+printf "\n[ ${GREEN}READY${RESET} ]\n"
