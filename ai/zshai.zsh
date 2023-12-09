@@ -1,4 +1,7 @@
 #!/bin/zsh
+#
+# Modified from https://github.com/tom-doerr/zsh_codex/blob/main/zsh_codex.plugin.zsh
+#
 
 SCRIPT_DIR="$(dirname "$0")"
 

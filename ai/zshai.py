@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+#
+# Modified from https://github.com/tom-doerr/zsh_codex/blob/main/create_completion.py
+#
 
 import os
 import sys
