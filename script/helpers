@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+RESET="\033[0m"
+RED="\033[0;31m"
+BLUE="\033[00;34m"
+GREEN="\033[00;32m"
+YELLOW="\033[0;33m"
+MAGENTA="\033[0;35m"
+
+is_macos() {
+    [ "$(uname -s)" == "Darwin" ]
+}
+
+info() {
+    printf "\r  [ ${BLUE}..${RESET} ] $1\n"
+}
+
+user() {
+    printf "\r  [ ${YELLOW}??${RESET} ] $1\n"
+}
+
+success() {
+    printf "\r\033[2K  [ ${GREEN}OK${RESET} ] $1\n"
+}
+
+fail() {
+    printf "\r\033[2K  [${RED}ERR${RESET}] $1\n"
+    echo ''
+    exit
+}
