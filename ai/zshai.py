@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 
-import configparser
 import os
 import sys
 
-import openai
+from dotenv import dotenv_values
+from openai import OpenAI
 
 LOCALRC = os.path.join(os.getenv("HOME"), ".localrc")
-API_KEY = os.getenv("ZSHAI_OPENAI_API_KEY")
-ORG_ID = os.getenv("ZSHAI_OPENAI _ORG_ID")
-
 if not os.path.isfile(LOCALRC):
     print("~/.localrc not found")
+    sys.exit(1)
 
-openai.organization_id = ORG_ID
-openai.api_key = API_KEY
-
+config = dotenv_values(LOCALRC)
+# ORG_ID = os.getenv("ZSHAI_OPENAI_ORG_ID")
+client = OpenAI(api_key=config["ZSHAI_OPENAI_API_KEY"])
 
 cursor_position_char = int(sys.argv[1])
 
@@ -24,12 +22,16 @@ buffer = sys.stdin.read()
 prompt_prefix = "#!/bin/zsh\n\n" + buffer[:cursor_position_char]
 prompt_suffix = buffer[cursor_position_char:]
 full_command = prompt_prefix + prompt_suffix
-response = openai.ChatCompletion.create(
+response = client.chat.completions.create(
     model="gpt-4-1106-preview",
     messages=[
         {
             "role": "system",
-            "content": "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation",
+            "content": "\
+                You are a zsh shell expert.\
+                You should only output the completed command, do not include conversation or explanation.\
+                You do not need to enclose your output in markdown, only valid shellscript.\
+                Please help me complete the following command.",
         },
         {
             "role": "user",
@@ -37,6 +39,7 @@ response = openai.ChatCompletion.create(
         },
     ],
 )
-completed_command = response["choices"][0]["message"]["content"]
+top_choice = response.choices.pop()
+completed_command = top_choice.message.content
 
 sys.stdout.write(f"\n{completed_command.replace(prompt_prefix, '', 1)}")
