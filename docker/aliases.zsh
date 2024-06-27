@@ -1,3 +1,2 @@
-alias docker="podman"
-# alias d='docker $*'
-# alias d-c='docker-compose $*'
+alias d='docker $*'
+alias d-c='docker-compose $*'

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# The path to the .env file
+ENV_FILE=".env"
+OUT_FILE="process.d.ts"
+
+# Start of the TypeScript file
+echo "declare namespace NodeJS {" > "$OUT_FILE"
+echo "  export interface ProcessEnv {" >> "$OUT_FILE"
+
+# Read each line from the .env file
+while IFS= read -r line
+do
+    # Extract the key name before the '=' character
+    if [[ "$line" =~ ^[[:alnum:]_]+ ]]; then
+        key=$(echo "$line" | cut -d '=' -f 1)
+        # Append to the TypeScript file with the key as the variable name and string as the type
+        echo "    $key: string;" >> "$OUT_FILE"
+    fi
+done < "$ENV_FILE"
+
+# End of the TypeScript file
+echo "  }" >> "$OUT_FILE"
+echo "}" >> "$OUT_FILE"
+
+echo "$OUT_FILE generated successfully."

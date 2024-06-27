@@ -1,0 +1,9 @@
+#!/bin/bash
+
+curl \
+	--silent \
+	--location \
+	--head \
+	--output /dev/null \
+	--write-out '%{url_effective}' \
+	-- "https://unpkg.dev/$1"
