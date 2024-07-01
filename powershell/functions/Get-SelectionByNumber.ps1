@@ -1,3 +1,15 @@
+function Show-MenuInline {
+    param (
+        [array]$MenuItems,
+        [string]$Title
+    )
+
+    Write-Host $Title
+    for ($i = 0; $i -lt $MenuItems.Length; $i++) {
+        Write-Host "[$i] $($MenuItems[$i])"
+    }
+}
+
 function Get-SelectionByNumber {
     param (
         [array]$MenuItems,
@@ -7,7 +19,7 @@ function Get-SelectionByNumber {
     $selectedIndex = -1
 
     while ($selectedIndex -lt 0 -or $selectedIndex -ge $MenuItems.Length) {
-        Display-MenuInline -MenuItems $MenuItems -Title $Title
+        Show-MenuInline -MenuItems $MenuItems -Title $Title
 
         $choice = Read-Host "Enter the number of your selection"
         if ($choice -match '^\d+$') {

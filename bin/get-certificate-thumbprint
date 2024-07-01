@@ -1,0 +1,11 @@
+#!/bin/bash
+
+CERTIFICATE="$1"
+
+if [ -f "$CERTIFICATE" ]; then
+    openssl x509 -noout -fingerprint -sha1 -inform dec -in "$CERTIFICATE" |
+        awk -F "=" '{print $2}' |
+        tr -d ':'
+else
+    echo "Could not open $CERTIFICATE"
+fi

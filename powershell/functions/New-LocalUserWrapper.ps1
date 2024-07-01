@@ -2,7 +2,7 @@ Import-Module microsoft.powershell.localaccounts -UseWindowsPowerShell
 
 function New-LocalUserWrapper {
     param (
-        [string]$Username,
+        [string]$UserName,
         [string]$Password,
         [string]$FullName,
         [string]$Description
@@ -13,7 +13,7 @@ function New-LocalUserWrapper {
 
     # Define parameters for New-LocalUser
     $Params = @{
-        Name        = $Username
+        Name        = $UserName
         Password    = $SecurePassword
         FullName    = $FullName
         Description = $Description
